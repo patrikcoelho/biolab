@@ -1413,9 +1413,13 @@
 
         msg.style.display = 'block';
         msg.style.color = '#10b981';
-        msg.textContent = 'Inscrição registrada com sucesso! Seus dados foram salvos na planilha.';
+        msg.textContent = 'Inscrição registrada com sucesso! Recarregando a página...';
         submitBtn.textContent = 'Inscrição enviada!';
         form.reset();
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } catch (err) {
         console.error('Erro ao enviar formulário:', err);
         msg.style.display = 'block';
