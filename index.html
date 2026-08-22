@@ -1,0 +1,1393 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#05162f" />
+  <title>Desvendando Genomas — BioLab Experience</title>
+  <meta name="description" content="Curso presencial: Desvendando Genomas — Introdução ao Sequenciamento de Nova Geração (NGS). 12/09, das 8h30 às 12h, UNAMA Boa Vista. Investimento: R$ 70,00." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --navy:#061832;
+      --navy-2:#0b2545;
+      --navy-3:#123a5f;
+      --green:#167a5b;
+      --green-2:#54ba82;
+      --mint:#cbeedc;
+      --ice:#edf7f4;
+      --paper:#f5f6f3;
+      --white:#ffffff;
+      --ink:#0b1830;
+      --muted:#647080;
+      --line:#d9e0df;
+      --max:1180px;
+      --shadow:0 24px 60px rgba(5,24,50,.15);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:var(--paper);
+      color:var(--ink);
+      font-family:"Archivo",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      line-height:1.5;
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    button,input,select{font:inherit}
+    img{max-width:100%;display:block}
+    .container{width:min(var(--max),calc(100% - 40px));margin-inline:auto}
+    .mono{font-family:"IBM Plex Mono",monospace}
+
+    .topbar{
+      background:var(--navy);
+      color:#d9ebe6;
+      font-size:.72rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-family:"IBM Plex Mono",monospace;
+    }
+    .topbar .container{
+      min-height:34px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+    .topbar strong{color:var(--green-2);font-weight:600}
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(245,246,243,.94);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(8,37,69,.10);
+    }
+    .nav{
+      height:76px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:28px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:800;
+      letter-spacing:-.03em;
+      color:var(--navy);
+      font-size:1.3rem;
+    }
+    .brand-mark{
+      width:46px;
+      height:46px;
+      border:2px solid var(--navy);
+      border-radius:50%;
+      position:relative;
+    }
+    .brand-mark:before{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:7px;
+      width:13px;
+      height:28px;
+      transform:translateX(-50%);
+      border-left:3px solid var(--green);
+      border-right:3px solid var(--navy);
+      border-radius:50%;
+    }
+    .brand-mark:after{
+      content:"";
+      position:absolute;
+      left:10px;
+      right:10px;
+      top:20px;
+      height:2px;
+      background:var(--green);
+      transform:rotate(-18deg);
+    }
+    .brand small{
+      display:block;
+      font-family:"IBM Plex Mono",monospace;
+      font-weight:500;
+      letter-spacing:.24em;
+      color:var(--green);
+      font-size:.52rem;
+      margin-top:-2px;
+    }
+    .nav-links{
+      display:flex;
+      gap:26px;
+      align-items:center;
+      font-size:.86rem;
+      font-weight:600;
+    }
+    .nav-links a:hover{color:var(--green)}
+    .nav-cta{
+      display:inline-flex;
+      align-items:center;
+      gap:9px;
+      padding:12px 17px;
+      background:var(--navy);
+      color:white;
+      font-weight:700;
+      font-size:.86rem;
+    }
+    .nav-cta svg{width:16px;height:16px}
+
+    .hero{
+      position:relative;
+      background:
+        linear-gradient(90deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.92) 44%,rgba(255,255,255,.64) 64%,rgba(255,255,255,.14) 100%),
+        radial-gradient(circle at 92% 12%,rgba(84,186,130,.2),transparent 24%);
+      border-bottom:1px solid var(--line);
+    }
+    .hero:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        linear-gradient(rgba(6,24,50,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(6,24,50,.04) 1px,transparent 1px);
+      background-size:56px 56px;
+      mask-image:linear-gradient(to right,#000,transparent 67%);
+    }
+    .hero-grid{
+      min-height:720px;
+      display:grid;
+      grid-template-columns:1.03fr .97fr;
+      align-items:center;
+      gap:56px;
+      padding:64px 0;
+      position:relative;
+      z-index:2;
+    }
+    .eyebrow{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-family:"IBM Plex Mono",monospace;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-size:.73rem;
+      color:var(--green);
+      font-weight:600;
+    }
+    .eyebrow:before{content:"";width:36px;height:2px;background:var(--green)}
+    h1{
+      font-size:clamp(3.7rem,7vw,7rem);
+      line-height:.86;
+      letter-spacing:-.065em;
+      margin:24px 0 24px;
+      color:var(--navy);
+      max-width:700px;
+    }
+    h1 span{
+      display:block;
+      font-size:.42em;
+      line-height:1.08;
+      letter-spacing:-.03em;
+      margin-top:22px;
+      color:var(--green);
+    }
+    .hero-copy{
+      font-size:1.06rem;
+      color:#465467;
+      max-width:640px;
+      margin-bottom:30px;
+    }
+    .hero-copy strong{color:var(--green)}
+    .hero-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      min-height:50px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:0 20px;
+      border:1px solid transparent;
+      font-weight:700;
+      transition:.2s ease;
+    }
+    .btn-primary{
+      background:var(--green);
+      color:white;
+    }
+    .btn-primary:hover{background:#126a4f;transform:translateY(-1px)}
+    .btn-ghost{
+      border-color:#b7c2c1;
+      background:rgba(255,255,255,.68);
+    }
+    .btn-ghost:hover{background:white;border-color:#8fa09d}
+    .hero-foot{
+      display:flex;
+      flex-wrap:wrap;
+      gap:22px;
+      margin-top:32px;
+      padding-top:22px;
+      border-top:1px solid #ccd5d4;
+      color:#465467;
+      font-size:.84rem;
+    }
+    .hero-foot span{display:flex;align-items:center;gap:8px}
+    .hero-foot i{
+      width:7px;height:7px;border-radius:50%;background:var(--green);display:block
+    }
+
+    .poster-stage{
+      position:relative;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+    .poster-frame{
+      width:min(430px,84%);
+      background:white;
+      padding:10px;
+      box-shadow:var(--shadow);
+      transform:rotate(2deg);
+      border:1px solid #d4dddd;
+    }
+    .poster-frame img{width:100%;height:auto}
+    .poster-note{
+      position:absolute;
+      right:0;
+      top:8%;
+      background:var(--navy);
+      color:white;
+      padding:15px 17px;
+      width:180px;
+      transform:rotate(-2deg);
+      box-shadow:0 15px 30px rgba(5,24,50,.14);
+    }
+    .poster-note small{
+      font-family:"IBM Plex Mono",monospace;
+      color:var(--green-2);
+      text-transform:uppercase;
+      letter-spacing:.09em;
+      font-size:.62rem;
+    }
+    .poster-note strong{display:block;font-size:1.15rem;margin-top:5px}
+    .helix{
+      position:absolute;
+      width:240px;height:390px;
+      right:-75px;
+      bottom:-70px;
+      opacity:.35;
+      pointer-events:none;
+    }
+
+    .facts{
+      background:white;
+      border-bottom:1px solid var(--line);
+    }
+    .facts-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+    }
+    .fact{
+      padding:28px 26px;
+      border-right:1px solid var(--line);
+      min-height:124px;
+    }
+    .fact:first-child{border-left:1px solid var(--line)}
+    .fact small{
+      display:block;
+      font-family:"IBM Plex Mono",monospace;
+      font-size:.66rem;
+      text-transform:uppercase;
+      letter-spacing:.1em;
+      color:var(--green);
+      margin-bottom:8px;
+    }
+    .fact strong{
+      display:block;
+      font-size:1.35rem;
+      letter-spacing:-.03em;
+      color:var(--navy);
+    }
+    .fact span{font-size:.82rem;color:var(--muted)}
+
+    section.content{padding:96px 0;border-bottom:1px solid var(--line)}
+    .section-top{
+      display:grid;
+      grid-template-columns:260px 1fr;
+      gap:44px;
+      margin-bottom:48px;
+    }
+    .section-index{
+      font-family:"IBM Plex Mono",monospace;
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.11em;
+      color:var(--green);
+    }
+    h2{
+      font-size:clamp(2.6rem,5vw,5.1rem);
+      line-height:.95;
+      letter-spacing:-.055em;
+      margin:0;
+      color:var(--navy);
+      max-width:850px;
+    }
+    h2 em{font-style:normal;color:var(--green)}
+
+    .learn-grid{
+      display:grid;
+      grid-template-columns:1.12fr .88fr;
+      gap:36px;
+    }
+    .syllabus{
+      border-top:1px solid var(--navy);
+    }
+    .syllabus-item{
+      display:grid;
+      grid-template-columns:70px 1fr auto;
+      gap:18px;
+      align-items:start;
+      padding:22px 0;
+      border-bottom:1px solid #c9d2d1;
+    }
+    .syllabus-item .num{
+      font-family:"IBM Plex Mono",monospace;
+      color:var(--green);
+      font-size:.74rem;
+      padding-top:4px;
+    }
+    .syllabus-item h3{
+      margin:0 0 6px;
+      font-size:1.15rem;
+      color:var(--navy);
+    }
+    .syllabus-item p{
+      margin:0;color:var(--muted);font-size:.9rem;max-width:620px
+    }
+    .syllabus-item svg{width:22px;height:22px;color:var(--green)}
+
+    .workflow-panel{
+      background:var(--navy);
+      color:white;
+      padding:30px;
+      min-height:100%;
+      position:relative;
+      overflow:hidden;
+    }
+    .workflow-panel:before{
+      content:"";
+      position:absolute;
+      right:-100px;top:-100px;
+      width:280px;height:280px;
+      border:1px solid rgba(84,186,130,.28);
+      border-radius:50%;
+      box-shadow:0 0 0 40px rgba(84,186,130,.04),0 0 0 80px rgba(84,186,130,.025);
+    }
+    .workflow-panel .mono{
+      color:var(--green-2);
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.1em;
+    }
+    .workflow-panel h3{
+      font-size:2rem;
+      line-height:1;
+      letter-spacing:-.04em;
+      max-width:350px;
+      margin:16px 0 30px;
+      position:relative;
+    }
+    .workflow{
+      display:grid;
+      gap:1px;
+      background:rgba(255,255,255,.16);
+      position:relative;
+    }
+    .workflow-step{
+      background:var(--navy);
+      padding:17px 18px;
+      display:grid;
+      grid-template-columns:46px 1fr;
+      gap:14px;
+      align-items:center;
+    }
+    .workflow-step b{
+      width:34px;height:34px;border:1px solid var(--green-2);
+      border-radius:50%;
+      display:grid;place-items:center;
+      font-family:"IBM Plex Mono",monospace;
+      font-size:.68rem;color:var(--green-2);
+    }
+    .workflow-step span{font-size:.9rem;color:#dbe5e4}
+
+    .applied{
+      background:var(--ice);
+    }
+    .applied-grid{
+      display:grid;
+      grid-template-columns:.9fr 1.1fr;
+      gap:60px;
+      align-items:center;
+    }
+    .applied-copy p{color:#4e5c6b;max-width:530px}
+    .applied-copy strong{color:var(--green)}
+    .applied-list{
+      margin-top:26px;
+      border-top:1px solid #b9c9c4;
+    }
+    .applied-list div{
+      display:flex;
+      gap:14px;
+      padding:13px 0;
+      border-bottom:1px solid #b9c9c4;
+      font-size:.9rem;
+    }
+    .applied-list span{
+      font-family:"IBM Plex Mono",monospace;
+      color:var(--green);
+      font-size:.68rem;
+      padding-top:3px;
+    }
+    .case-window{
+      background:white;
+      border:1px solid #bed0ca;
+      box-shadow:0 20px 45px rgba(5,24,50,.08);
+    }
+    .case-head{
+      min-height:42px;
+      background:var(--navy);
+      color:#dfe8e7;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 15px;
+      font-family:"IBM Plex Mono",monospace;
+      font-size:.62rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .case-body{padding:24px}
+    .case-chart{
+      height:210px;
+      position:relative;
+      border-left:1px solid #cad6d4;
+      border-bottom:1px solid #cad6d4;
+      margin-bottom:20px;
+      overflow:hidden;
+      background-image:linear-gradient(rgba(6,24,50,.05) 1px,transparent 1px);
+      background-size:100% 42px;
+    }
+    .peak{
+      position:absolute;
+      bottom:0;
+      width:2px;
+      background:var(--green);
+      transform-origin:bottom;
+    }
+    .peak:after{
+      content:"";
+      position:absolute;
+      top:-2px;left:-2px;
+      width:6px;height:6px;border-radius:50%;
+      background:var(--green-2);
+    }
+    .case-legend{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+    .case-legend div{
+      border:1px solid var(--line);
+      padding:12px;
+    }
+    .case-legend small{
+      display:block;
+      font-family:"IBM Plex Mono",monospace;
+      color:var(--muted);
+      font-size:.58rem;
+      text-transform:uppercase;
+      margin-bottom:4px;
+    }
+    .case-legend strong{font-size:.85rem;color:var(--navy)}
+
+    .audience{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:0;
+      border-top:1px solid var(--navy);
+      border-left:1px solid var(--navy);
+    }
+    .audience article{
+      padding:32px;
+      min-height:250px;
+      border-right:1px solid var(--navy);
+      border-bottom:1px solid var(--navy);
+      position:relative;
+      background:#f8f9f6;
+    }
+    .audience .tag{
+      font-family:"IBM Plex Mono",monospace;
+      color:var(--green);
+      text-transform:uppercase;
+      letter-spacing:.1em;
+      font-size:.65rem;
+    }
+    .audience h3{font-size:1.45rem;letter-spacing:-.03em;margin:38px 0 10px;color:var(--navy)}
+    .audience p{margin:0;color:var(--muted);font-size:.9rem}
+
+    .teacher-strip{
+      display:grid;
+      grid-template-columns:330px 1fr;
+      border:1px solid var(--navy);
+      background:white;
+    }
+    .teacher-photo{
+      min-height:340px;
+      background:
+        linear-gradient(160deg,rgba(84,186,130,.20),rgba(6,24,50,.08)),
+        linear-gradient(135deg,#d9e4df,#becbc7);
+      display:grid;place-items:center;
+      color:#62716e;
+      font-family:"IBM Plex Mono",monospace;
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      border-right:1px solid var(--navy);
+      position:relative;
+      overflow:hidden;
+    }
+    .teacher-photo:before{
+      content:"";
+      width:130px;height:130px;border-radius:50%;
+      background:#95a7a1;
+      position:absolute;top:52px;
+    }
+    .teacher-photo:after{
+      content:"";
+      width:230px;height:190px;
+      border-radius:45% 45% 0 0;
+      background:var(--green);
+      position:absolute;bottom:-12px;
+    }
+    .teacher-photo span{position:absolute;z-index:2;bottom:16px;left:16px;background:white;padding:8px 10px}
+    .teacher-copy{padding:42px}
+    .teacher-copy .mono{
+      color:var(--green);
+      text-transform:uppercase;
+      letter-spacing:.1em;
+      font-size:.68rem;
+    }
+    .teacher-copy h3{
+      font-size:2.3rem;
+      line-height:1;
+      letter-spacing:-.045em;
+      color:var(--navy);
+      margin:14px 0 18px;
+    }
+    .teacher-copy p{color:var(--muted);max-width:650px}
+    .teacher-stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      margin-top:30px;
+      border-top:1px solid var(--line);
+      border-left:1px solid var(--line);
+    }
+    .teacher-stats div{
+      padding:14px;
+      border-right:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+    }
+    .teacher-stats small{
+      display:block;font-family:"IBM Plex Mono";font-size:.57rem;color:var(--muted);text-transform:uppercase;margin-bottom:4px
+    }
+    .teacher-stats strong{font-size:.82rem;color:var(--navy)}
+
+    .ticket-section{
+      background:var(--navy);
+      color:white;
+    }
+    .ticket-section h2{color:white}
+    .ticket-section h2 em{color:var(--green-2)}
+    .ticket{
+      display:grid;
+      grid-template-columns:1fr 360px;
+      background:var(--paper);
+      color:var(--ink);
+      border:1px solid var(--green-2);
+      box-shadow:0 25px 60px rgba(0,0,0,.16);
+    }
+    .ticket-main{padding:38px}
+    .ticket-main .mono{
+      color:var(--green);
+      font-size:.67rem;
+      text-transform:uppercase;
+      letter-spacing:.1em;
+    }
+    .ticket-main h3{
+      font-size:2.25rem;
+      line-height:1;
+      letter-spacing:-.045em;
+      color:var(--navy);
+      margin:12px 0 25px;
+    }
+    .ticket-data{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      border-top:1px solid #c9d3d1;
+      border-left:1px solid #c9d3d1;
+      margin-bottom:28px;
+    }
+    .ticket-data div{
+      padding:15px;
+      border-right:1px solid #c9d3d1;
+      border-bottom:1px solid #c9d3d1;
+    }
+    .ticket-data small{
+      display:block;
+      color:var(--muted);
+      font-family:"IBM Plex Mono",monospace;
+      text-transform:uppercase;
+      font-size:.58rem;
+      margin-bottom:4px;
+    }
+    .ticket-data strong{color:var(--navy)}
+    .ticket-side{
+      border-left:1px dashed #9aa9a5;
+      padding:38px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      background:#eef4f1;
+      position:relative;
+    }
+    .ticket-side:before,.ticket-side:after{
+      content:"";
+      position:absolute;
+      width:22px;height:22px;border-radius:50%;
+      background:var(--navy);
+      left:-12px;
+    }
+    .ticket-side:before{top:-12px}
+    .ticket-side:after{bottom:-12px}
+    .price-label{
+      font-family:"IBM Plex Mono",monospace;
+      color:var(--green);
+      text-transform:uppercase;
+      letter-spacing:.1em;
+      font-size:.62rem;
+    }
+    .price{
+      font-size:4.7rem;
+      line-height:.85;
+      letter-spacing:-.07em;
+      color:var(--navy);
+      font-weight:800;
+      margin:10px 0 4px;
+    }
+    .price small{font-size:.33em;vertical-align:top;margin-right:6px;letter-spacing:-.03em}
+    .ticket-side p{font-size:.8rem;color:var(--muted);margin-top:8px}
+    .ticket-side .btn{width:100%;margin-top:22px}
+
+    .faq{border-top:1px solid #334962}
+    .faq details{
+      border-bottom:1px solid #334962;
+      padding:20px 0;
+    }
+    .faq summary{
+      list-style:none;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      font-weight:700;
+      color:white;
+    }
+    .faq summary::-webkit-details-marker{display:none}
+    .faq summary:after{
+      content:"+";
+      font-family:"IBM Plex Mono",monospace;
+      color:var(--green-2);
+      font-size:1.2rem;
+    }
+    .faq details[open] summary:after{content:"–"}
+    .faq p{max-width:780px;color:#bac7d3;font-size:.9rem;margin:12px 0 0}
+
+    .signup{
+      background:white;
+    }
+    .signup-grid{
+      display:grid;
+      grid-template-columns:.85fr 1.15fr;
+      gap:54px;
+    }
+    .signup-copy p{color:var(--muted);max-width:470px}
+    .signup-note{
+      margin-top:28px;
+      padding:16px 0;
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      font-family:"IBM Plex Mono",monospace;
+      font-size:.68rem;
+      color:var(--green);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+    form{
+      border-top:1px solid var(--navy);
+    }
+    .field{
+      display:grid;
+      grid-template-columns:150px 1fr;
+      gap:20px;
+      align-items:center;
+      border-bottom:1px solid var(--line);
+      padding:15px 0;
+    }
+    label{
+      font-family:"IBM Plex Mono",monospace;
+      color:var(--muted);
+      text-transform:uppercase;
+      font-size:.62rem;
+      letter-spacing:.07em;
+    }
+    input,select{
+      width:100%;
+      border:0;
+      outline:none;
+      background:transparent;
+      color:var(--navy);
+      padding:8px 0;
+    }
+    input::placeholder{color:#a2aba9}
+    .check{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:16px 0;
+      font-size:.75rem;
+      color:var(--muted);
+    }
+    .check input{width:auto;margin-top:4px}
+    .form-msg{
+      display:none;
+      margin-top:12px;
+      padding:11px 12px;
+      background:var(--ice);
+      color:var(--green);
+      font-size:.8rem;
+      font-weight:600;
+    }
+
+    footer{
+      background:#031126;
+      color:#99aabc;
+      padding:34px 0 90px;
+    }
+    .footer-grid{
+      display:grid;
+      grid-template-columns:1fr auto 1fr;
+      gap:24px;
+      align-items:end;
+      font-size:.78rem;
+    }
+    .footer-grid strong{color:white}
+    .footer-links{display:flex;gap:18px}
+    .footer-right{text-align:right}
+
+    .mobile-cta{
+      display:none;
+      position:fixed;
+      z-index:80;
+      left:12px;right:12px;bottom:12px;
+      background:var(--green);
+      color:white;
+      box-shadow:0 12px 35px rgba(5,24,50,.25);
+      padding:13px 16px;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .mobile-cta small{display:block;font-family:"IBM Plex Mono";font-size:.55rem;text-transform:uppercase;opacity:.8}
+    .mobile-cta strong{font-size:.95rem}
+    .mobile-cta span:last-child{font-weight:800}
+
+    @media(max-width:980px){
+      .nav-links{display:none}
+      .hero-grid,.learn-grid,.applied-grid,.signup-grid{grid-template-columns:1fr}
+
+      /* HERO — tablet / telas intermediárias */
+      .hero-grid{
+        min-height:auto;
+        padding:52px 0 48px;
+        gap:0;
+      }
+      .hero h1{
+        max-width:760px;
+        font-size:clamp(3.25rem,6.3vw,4.15rem);
+        line-height:.9;
+        margin:20px 0 20px;
+      }
+      .hero h1 span{
+        font-size:.43em;
+        line-height:1.12;
+        margin-top:16px;
+        max-width:680px;
+      }
+      .hero-copy{
+        max-width:700px;
+        font-size:1rem;
+        line-height:1.58;
+        margin-bottom:26px;
+      }
+      .hero-actions{
+        max-width:700px;
+      }
+      .hero-foot{
+        max-width:760px;
+        gap:14px 24px;
+        margin-top:26px;
+        padding-top:19px;
+      }
+      /* O flyer é redundante nesta largura e comprimia a hero. */
+      .poster-stage{display:none}
+      .helix{display:none}
+
+      .facts-grid{grid-template-columns:repeat(2,1fr)}
+      .fact:nth-child(3){border-left:1px solid var(--line)}
+      .section-top{grid-template-columns:1fr;gap:14px}
+      .teacher-strip{grid-template-columns:280px 1fr}
+      .ticket{grid-template-columns:1fr}
+      .ticket-side{border-left:0;border-top:1px dashed #9aa9a5}
+      .ticket-side:before,.ticket-side:after{display:none}
+      .footer-grid{grid-template-columns:1fr}
+      .footer-right{text-align:left}
+    }
+    @media(max-width:700px){
+      .container{width:min(var(--max),calc(100% - 24px))}
+      .topbar .container{justify-content:center}
+      .topbar .container span:last-child{display:none}
+      .nav{height:66px}
+      .brand{font-size:1.1rem}
+      .brand-mark{width:38px;height:38px}
+      .nav-cta{display:none}
+
+      /* HERO — mobile */
+      .hero-grid{
+        padding:32px 0 38px;
+      }
+      .hero .eyebrow{
+        gap:9px;
+        font-size:.62rem;
+        line-height:1.35;
+        letter-spacing:.09em;
+      }
+      .hero .eyebrow:before{
+        width:22px;
+        flex:0 0 22px;
+      }
+      .hero h1{
+        font-size:clamp(2.65rem,12.5vw,3.45rem);
+        line-height:.92;
+        letter-spacing:-.055em;
+        margin:17px 0 18px;
+      }
+      .hero h1 span{
+        font-size:.46em;
+        line-height:1.12;
+        letter-spacing:-.025em;
+        margin-top:14px;
+      }
+      .hero-copy{
+        font-size:.94rem;
+        line-height:1.58;
+        margin-bottom:22px;
+      }
+      .hero-actions{
+        display:grid;
+        grid-template-columns:1fr;
+        gap:10px;
+        width:100%;
+      }
+      .hero-actions .btn{
+        width:100%;
+        min-height:48px;
+        padding:0 14px;
+        text-align:center;
+      }
+      .hero-foot{
+        display:grid;
+        grid-template-columns:1fr;
+        gap:10px;
+        margin-top:22px;
+        padding-top:18px;
+        font-size:.8rem;
+      }
+      .hero-foot span{
+        min-width:0;
+      }
+      .poster-stage{display:none}
+      .helix{display:none}
+
+      .facts-grid{grid-template-columns:1fr 1fr}
+      .fact{padding:20px 15px;min-height:105px}
+      .fact strong{font-size:1.05rem}
+      section.content{padding:70px 0}
+      h2{font-size:clamp(2.55rem,13vw,4rem)}
+      .syllabus-item{grid-template-columns:48px 1fr}
+      .syllabus-item svg{display:none}
+      .audience{grid-template-columns:1fr}
+      .teacher-strip{grid-template-columns:1fr}
+      .teacher-photo{min-height:300px;border-right:0;border-bottom:1px solid var(--navy)}
+      .teacher-copy{padding:28px 20px}
+      .teacher-stats{grid-template-columns:1fr}
+      .ticket-main,.ticket-side{padding:26px 20px}
+      .ticket-data{grid-template-columns:1fr}
+      .price{font-size:4rem}
+      .field{grid-template-columns:1fr;gap:3px}
+      footer{padding-bottom:100px}
+      .mobile-cta{display:flex}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container">
+      <span><strong>BioLab Experience</strong> · formação complementar</span>
+      <span>12 setembro 2026 · Boa Vista/RR</span>
+    </div>
+  </div>
+
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#">
+        <span class="brand-mark"></span>
+        <span>biolab<small>EXPERIENCE</small></span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#programa">Programa</a>
+        <a href="#formato">Formato</a>
+        <a href="#publico">Para quem é</a>
+        <a href="#faq">Dúvidas</a>
+      </nav>
+
+      <a class="nav-cta" href="#inscricao">
+        Inscrever-se
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 7l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Curso teórico-aplicado · Turma 01</div>
+
+          <h1>
+            Desvendando Genomas
+            <span>Introdução ao Sequenciamento de Nova Geração (NGS)</span>
+          </h1>
+
+          <p class="hero-copy">
+            Entenda uma das tecnologias que revolucionou a <strong>genética</strong> e a
+            <strong>biologia molecular</strong> — dos princípios do sequenciamento ao fluxo de trabalho,
+            aplicações e <strong>interpretação dos resultados</strong>.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#inscricao">Garantir minha vaga · R$ 70</a>
+            <a class="btn btn-ghost" href="#programa">Ver conteúdo do curso</a>
+          </div>
+
+          <div class="hero-foot">
+            <span><i></i> Presencial na UNAMA Boa Vista</span>
+            <span><i></i> 8h30 às 12h</span>
+            <span><i></i> Certificado incluso</span>
+          </div>
+        </div>
+
+        <div class="poster-stage">
+          <div class="poster-frame">
+            <img src="assets/curso-ngs.png" alt="Flyer do curso Desvendando Genomas">
+          </div>
+
+          <div class="poster-note">
+            <small>Próxima turma</small>
+            <strong>12 de setembro</strong>
+            <span>sábado · manhã</span>
+          </div>
+
+          <svg class="helix" viewBox="0 0 240 390" fill="none" aria-hidden="true">
+            <path d="M70 10c110 70 110 300 0 370M170 10C60 80 60 310 170 380" stroke="#167a5b" stroke-width="2.2"/>
+            <path d="M77 44h86M61 86h118M52 131h136M49 177h142M51 223h138M57 268h126M69 312h102M84 349h72" stroke="#0b2545" stroke-width="1.2" opacity=".72"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="facts">
+      <div class="container facts-grid">
+        <div class="fact">
+          <small>Data</small>
+          <strong>12/09/2026</strong>
+          <span>Sábado</span>
+        </div>
+        <div class="fact">
+          <small>Horário</small>
+          <strong>8h30 às 12h</strong>
+          <span>Turno da manhã</span>
+        </div>
+        <div class="fact">
+          <small>Local</small>
+          <strong>UNAMA</strong>
+          <span>Boa Vista · Roraima</span>
+        </div>
+        <div class="fact">
+          <small>Investimento</small>
+          <strong>R$ 70,00</strong>
+          <span>Valor único · certificado incluso</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="content" id="programa">
+      <div class="container">
+        <div class="section-top">
+          <div class="section-index">01 / Programa</div>
+          <h2>Do conceito de NGS à <em>leitura dos resultados.</em></h2>
+        </div>
+
+        <div class="learn-grid">
+          <div class="syllabus">
+            <article class="syllabus-item">
+              <div class="num">01</div>
+              <div>
+                <h3>Fundamentos do sequenciamento de nova geração</h3>
+                <p>Princípios do NGS, diferenças em relação ao sequenciamento tradicional e visão geral das principais plataformas.</p>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </article>
+
+            <article class="syllabus-item">
+              <div class="num">02</div>
+              <div>
+                <h3>Plataformas e estratégias de sequenciamento</h3>
+                <p>Como diferentes tecnologias geram leituras, quais perguntas cada abordagem pode responder e onde entram na rotina científica.</p>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </article>
+
+            <article class="syllabus-item">
+              <div class="num">03</div>
+              <div>
+                <h3>Do DNA/RNA ao resultado</h3>
+                <p>Visão completa do workflow: obtenção da amostra, preparo, biblioteca, sequenciamento, geração de dados e análise.</p>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </article>
+
+            <article class="syllabus-item">
+              <div class="num">04</div>
+              <div>
+                <h3>Aplicações em saúde e pesquisa</h3>
+                <p>Uso do NGS em virologia, genética, diagnóstico, epidemiologia molecular, pesquisa e outras áreas biomédicas.</p>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </article>
+
+            <article class="syllabus-item">
+              <div class="num">05</div>
+              <div>
+                <h3>Interpretação e estudos de casos reais</h3>
+                <p>Como transformar dados de sequenciamento em informação útil e como ler resultados dentro de um contexto científico.</p>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </article>
+          </div>
+
+          <aside class="workflow-panel">
+            <div class="mono">Mapa do curso</div>
+            <h3>O caminho de uma amostra até a interpretação.</h3>
+
+            <div class="workflow">
+              <div class="workflow-step"><b>01</b><span>Amostra biológica</span></div>
+              <div class="workflow-step"><b>02</b><span>Extração de DNA/RNA</span></div>
+              <div class="workflow-step"><b>03</b><span>Preparo de biblioteca</span></div>
+              <div class="workflow-step"><b>04</b><span>Sequenciamento</span></div>
+              <div class="workflow-step"><b>05</b><span>Dados brutos e controle de qualidade</span></div>
+              <div class="workflow-step"><b>06</b><span>Análise e interpretação</span></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="content applied" id="formato">
+      <div class="container applied-grid">
+        <div class="applied-copy">
+          <div class="section-index">02 / Formato</div>
+          <h2 style="margin-top:16px">Teórico, mas <em>longe de ser abstrato.</em></h2>
+          <p>
+            O curso foi desenhado para explicar o NGS de forma visual e aplicada, mesmo sem depender de uma plataforma de sequenciamento dentro da instituição.
+          </p>
+          <p>
+            A proposta é usar <strong>fluxos reais de trabalho, resultados, exemplos de plataformas e estudos de casos</strong>
+            para que o aluno compreenda o que acontece em cada etapa do processo.
+          </p>
+
+          <div class="applied-list">
+            <div><span>01</span><strong>Comparação entre tecnologias e plataformas</strong></div>
+            <div><span>02</span><strong>Workflow completo explicado etapa por etapa</strong></div>
+            <div><span>03</span><strong>Visualização de dados e exemplos de resultados</strong></div>
+            <div><span>04</span><strong>Casos aplicados à Biomedicina e à pesquisa</strong></div>
+          </div>
+        </div>
+
+        <div class="case-window">
+          <div class="case-head">
+            <span>ngs_case_01.result</span>
+            <span>visualização educacional</span>
+          </div>
+          <div class="case-body">
+            <div class="case-chart" id="caseChart"></div>
+            <div class="case-legend">
+              <div><small>Etapa</small><strong>Sequenciamento</strong></div>
+              <div><small>Saída</small><strong>Reads / sinais</strong></div>
+              <div><small>Objetivo</small><strong>Interpretação</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content" id="publico">
+      <div class="container">
+        <div class="section-top">
+          <div class="section-index">03 / Para quem é</div>
+          <h2>Para quem quer entender NGS <em>antes de precisar usá-lo.</em></h2>
+        </div>
+
+        <div class="audience">
+          <article>
+            <div class="tag">Estudantes</div>
+            <h3>Biomedicina e áreas da saúde</h3>
+            <p>Para quem quer ampliar a visão sobre genética, biologia molecular, diagnóstico e novas tecnologias aplicadas à saúde.</p>
+          </article>
+
+          <article>
+            <div class="tag">Pesquisa</div>
+            <h3>Iniciação científica e TCC</h3>
+            <p>Ideal para alunos que começaram a entrar em projetos de pesquisa e precisam compreender onde o NGS se encaixa.</p>
+          </article>
+
+          <article>
+            <div class="tag">Interesse profissional</div>
+            <h3>Biologia molecular e diagnóstico</h3>
+            <p>Para quem considera atuar ou se especializar em áreas em que dados genômicos estão cada vez mais presentes.</p>
+          </article>
+
+          <article>
+            <div class="tag">Pré-requisito</div>
+            <h3>Não precisa saber bioinformática</h3>
+            <p>O curso começa pelos fundamentos. Conhecimentos básicos de genética e biologia molecular ajudam, mas não é necessário dominar programação.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="container">
+        <div class="section-top">
+          <div class="section-index">04 / Docência</div>
+          <h2>Aprenda com quem vive <em>biologia molecular e pesquisa.</em></h2>
+        </div>
+
+        <div class="teacher-strip">
+          <div class="teacher-photo"><span>Adicionar foto profissional</span></div>
+
+          <div class="teacher-copy">
+            <div class="mono">Professora responsável</div>
+            <h3>Da pesquisa para a sala de aula.</h3>
+            <p>
+              Esta área foi preparada para apresentar a professora de forma objetiva: formação em Biomedicina,
+              experiência docente, atuação em pesquisa e afinidade com biologia molecular, virologia e técnicas de sequenciamento.
+            </p>
+            <p>
+              O foco é mostrar ao aluno que o conteúdo do curso nasce de experiência acadêmica real — não de uma apresentação genérica sobre tecnologia.
+            </p>
+
+            <div class="teacher-stats">
+              <div><small>Área</small><strong>Biologia Molecular</strong></div>
+              <div><small>Atuação</small><strong>Docência e Pesquisa</strong></div>
+              <div><small>Curso</small><strong>BioLab Experience</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content ticket-section" id="inscricao">
+      <div class="container">
+        <div class="section-top">
+          <div class="section-index" style="color:var(--green-2)">05 / Inscrição</div>
+          <h2>Uma manhã para começar a <em>enxergar genomas de outro jeito.</em></h2>
+        </div>
+
+        <div class="ticket">
+          <div class="ticket-main">
+            <div class="mono">BioLab Experience · Turma 01</div>
+            <h3>Desvendando Genomas — Introdução ao NGS</h3>
+
+            <div class="ticket-data">
+              <div><small>Data</small><strong>12 de setembro de 2026 · sábado</strong></div>
+              <div><small>Horário</small><strong>8h30 às 12h</strong></div>
+              <div><small>Local</small><strong>UNAMA · Boa Vista/RR</strong></div>
+              <div><small>Certificação</small><strong>Certificado de participação</strong></div>
+            </div>
+
+            <p style="color:var(--muted);max-width:680px;margin:0">
+              As vagas são limitadas para manter uma turma mais próxima e permitir espaço para perguntas e discussão dos casos apresentados.
+            </p>
+          </div>
+
+          <div class="ticket-side">
+            <div>
+              <div class="price-label">Investimento</div>
+              <div class="price"><small>R$</small>70</div>
+              <p>Valor único. Certificado incluso.</p>
+            </div>
+
+            <a class="btn btn-primary" href="#formulario">Quero garantir minha vaga</a>
+          </div>
+        </div>
+
+        <div class="faq" id="faq" style="margin-top:72px">
+          <details>
+            <summary>O curso terá aula prática em equipamento de NGS?</summary>
+            <p>Não. A proposta desta turma é teórico-aplicada: o aluno conhecerá as etapas, plataformas, workflows, resultados e estudos de casos sem necessidade de operar um sequenciador durante a atividade.</p>
+          </details>
+          <details>
+            <summary>Preciso saber bioinformática ou programação?</summary>
+            <p>Não. O curso é introdutório e foi estruturado para apresentar a lógica do sequenciamento e da análise de dados sem exigir conhecimento prévio de programação.</p>
+          </details>
+          <details>
+            <summary>Vou receber certificado?</summary>
+            <p>Sim. A participação no curso inclui certificado digital conforme os critérios de presença definidos pela organização.</p>
+          </details>
+          <details>
+            <summary>O curso é só para alunos de Biomedicina?</summary>
+            <p>O conteúdo é especialmente relevante para estudantes de Biomedicina, mas também pode interessar a alunos de outras áreas da saúde e ciências biológicas que desejem compreender os fundamentos do NGS.</p>
+          </details>
+          <details>
+            <summary>Onde será realizado?</summary>
+            <p>O curso será presencial, nas dependências da UNAMA em Boa Vista, Roraima. As orientações finais de sala e acesso podem ser enviadas aos inscritos antes do evento.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="content signup" id="formulario">
+      <div class="container signup-grid">
+        <div class="signup-copy">
+          <div class="section-index">06 / Cadastro</div>
+          <h2 style="margin-top:16px">Reserve seu interesse na <em>primeira turma.</em></h2>
+          <p>
+            O formulário está funcional como protótipo. Na versão publicada, ele pode ser conectado ao Google Sheets,
+            WhatsApp, e-mail ou a um checkout para confirmação automática do pagamento.
+          </p>
+          <div class="signup-note">Vagas limitadas · 12/09 · 8h30–12h · R$ 70,00</div>
+        </div>
+
+        <form id="interestForm">
+          <div class="field">
+            <label for="name">Nome completo</label>
+            <input id="name" required placeholder="Seu nome">
+          </div>
+
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input id="email" type="email" required placeholder="voce@email.com">
+          </div>
+
+          <div class="field">
+            <label for="phone">WhatsApp</label>
+            <input id="phone" required placeholder="(95) 99999-9999">
+          </div>
+
+          <div class="field">
+            <label for="profile">Perfil</label>
+            <select id="profile">
+              <option>Estudante de Biomedicina</option>
+              <option>Biomédico(a)</option>
+              <option>Estudante de outro curso da saúde</option>
+              <option>Outro</option>
+            </select>
+          </div>
+
+          <label class="check">
+            <input type="checkbox" required>
+            <span>Concordo em fornecer estes dados para receber informações e orientações sobre a inscrição no curso.</span>
+          </label>
+
+          <button class="btn btn-primary" type="submit" style="border:0">Enviar interesse</button>
+          <div class="form-msg" id="formMsg">Interesse registrado nesta demonstração. A versão final poderá redirecionar para pagamento ou confirmação por WhatsApp.</div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div><strong>BioLab Experience</strong><br>Cursos livres em Biomedicina · Boa Vista/RR</div>
+      <div class="footer-links">
+        <a href="#programa">Programa</a>
+        <a href="#publico">Para quem é</a>
+        <a href="#inscricao">Inscrição</a>
+      </div>
+      <div class="footer-right">Desvendando Genomas · 12/09/2026</div>
+    </div>
+  </footer>
+
+  <a class="mobile-cta" href="#inscricao">
+    <span><small>Turma 01 · 12/09</small><strong>Desvendando Genomas</strong></span>
+    <span>R$ 70 →</span>
+  </a>
+
+  <script>
+    // Visual educacional inspirado em leitura de sinais de sequenciamento.
+    const chart = document.getElementById('caseChart');
+    const heights = [34,68,25,92,48,78,42,120,55,88,39,105,63,146,70,110,54,134,86,160,48,122,71,98,44,116,61,142,82,126,50,108,72,154,64,118,41,101,58,136];
+    heights.forEach((h,i) => {
+      const p = document.createElement('span');
+      p.className = 'peak';
+      p.style.height = h + 'px';
+      p.style.left = (2.5 + i * 2.35) + '%';
+      p.style.opacity = (.45 + (i % 5) * .1);
+      chart.appendChild(p);
+    });
+
+    const form = document.getElementById('interestForm');
+    const msg = document.getElementById('formMsg');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      msg.style.display = 'block';
+      form.querySelector('button').textContent = 'Interesse registrado';
+    });
+  </script>
+</body>
+</html>
