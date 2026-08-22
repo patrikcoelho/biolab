@@ -1316,22 +1316,22 @@
         <form id="interestForm">
           <div class="field">
             <label for="name">Nome completo</label>
-            <input id="name" required placeholder="Seu nome">
+            <input id="name" name="name" required placeholder="Seu nome">
           </div>
 
           <div class="field">
             <label for="email">E-mail</label>
-            <input id="email" type="email" required placeholder="voce@email.com">
+            <input id="email" name="email" type="email" required placeholder="voce@email.com">
           </div>
 
           <div class="field">
             <label for="phone">WhatsApp</label>
-            <input id="phone" required placeholder="(95) 99999-9999">
+            <input id="phone" name="phone" required placeholder="(95) 99999-9999">
           </div>
 
           <div class="field">
             <label for="profile">Perfil</label>
-            <select id="profile">
+            <select id="profile" name="profile">
               <option>Estudante de Biomedicina</option>
               <option>Biomédico(a)</option>
               <option>Estudante de outro curso da saúde</option>
@@ -1345,7 +1345,7 @@
           </label>
 
           <button class="btn btn-primary" type="submit" style="border:0">Enviar interesse</button>
-          <div class="form-msg" id="formMsg">Interesse registrado nesta demonstração. A versão final poderá redirecionar para pagamento ou confirmação por WhatsApp.</div>
+          <div class="form-msg" id="formMsg" style="display:none; margin-top:12px; font-size:14px; font-weight:500;"></div>
         </form>
       </div>
     </section>
@@ -1383,10 +1383,47 @@
 
     const form = document.getElementById('interestForm');
     const msg = document.getElementById('formMsg');
-    form.addEventListener('submit', (e) => {
+    const submitBtn = form.querySelector('button');
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzP790kQF0HjVyJSQi8sZgm8JWLXhhsTSqCFzFHRqH0OUchHg6Zmhagmi7o5uvNSq9Qrw/exec';
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      msg.style.display = 'block';
-      form.querySelector('button').textContent = 'Interesse registrado';
+      
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando...';
+      msg.style.display = 'none';
+
+      const payload = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        profile: document.getElementById('profile').value
+      };
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        msg.style.display = 'block';
+        msg.style.color = '#10b981';
+        msg.textContent = 'Inscrição registrada com sucesso! Seus dados foram salvos na planilha.';
+        submitBtn.textContent = 'Inscrição enviada!';
+        form.reset();
+      } catch (err) {
+        console.error('Erro ao enviar formulário:', err);
+        msg.style.display = 'block';
+        msg.style.color = '#ef4444';
+        msg.textContent = 'Ocorreu um erro ao enviar. Por favor, tente novamente.';
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+      }
     });
   </script>
 </body>
